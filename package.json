@@ -1,0 +1,58 @@
+{
+  "name": "reformer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint *.js src/**/*.js",
+    "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive",
+    "test:watch": "npm run test -- --watch",
+    "build": "babel src --out-dir lib",
+    "build:watch": "chokidar 'src/**/*.js' -c 'npm run build'"
+  },
+  "directories": {
+    "bin": "./bin"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "index.js"
+  ],
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "eslintConfig": {
+    "extends": "airbnb",
+    "rules": {
+      "semi": [
+        2,
+        "never"
+      ],
+      "no-multiple-empty-lines": [
+        2,
+        {
+          "max": 1,
+          "maxBOF": 0,
+          "maxEOF": 1
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "chokidar-cli": "^1.2.0",
+    "eslint": "^2.12.0",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.8.1",
+    "eslint-plugin-jsx-a11y": "^2.0.1",
+    "eslint-plugin-react": "^5.2.2"
+  },
+  "dependencies": {
+    "kua": "^1.0.2"
+  }
+}
