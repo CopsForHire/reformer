@@ -2,8 +2,7 @@ import kua from 'kua'
 import * as fs from 'fs'
 import * as R from 'ramda'
 
-const usage = `
-Usage: form <command> [options]
+const usage = `Usage: form <command> [options]
 
 commands:
   generate-create-tables
@@ -26,7 +25,6 @@ const historyTable = `CREATE TABLE \`history\` (
 class Formation {
   constructor() {
     kua.initialize()
-    console.log(kua.option.schema)
     if (!['generateCreateTables',
          ].includes(kua.task) ||
         !kua.option.schema ||
@@ -34,19 +32,16 @@ class Formation {
       this.usage()
     }
     const schema = kua.loadYaml(kua.option.schema)
-    console.log(this[kua.task](schema))
+    this[kua.task](schema)
   }
 
   usage() {
-    /* eslint-disable no-console */
-    console.log(usage)
-    /* eslint-enable no-console */
+    process.stdout.write(usage)
     process.exit()
   }
 
   generateCreateTables(schema) {
     const lines = []
-    lines.push('SET foreign_key_checks = 0;')
     for (const table of Object.keys(schema.tables)) {
       const tableName = kua.camelize(table)
       const parts = []
@@ -170,8 +165,12 @@ class Formation {
       }
     }
     lines.push(historyTable)
-    lines.push('SET foreign_key_checks = 1;')
-    return lines.join('\n')
+    lines.push('')
+    const result = lines.join('\n')
+    if (kua.option.print) {
+      process.stdout.write(result)
+    }
+    return result
   }
 }
 
