@@ -8,7 +8,8 @@
     "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive",
     "test:watch": "npm run test -- --watch",
     "build": "babel src --out-dir lib",
-    "build:watch": "chokidar 'src/**/*.js' -c 'npm run build'"
+    "build:watch": "chokidar 'src/**/*.js' -c 'npm run build'",
+    "upgrade": "ncu -a"
   },
   "directories": {
     "bin": "./bin"
@@ -44,15 +45,16 @@
     }
   },
   "devDependencies": {
-    "babel-cli": "^6.10.1",
+    "babel-cli": "^6.14.0",
     "chokidar-cli": "^1.2.0",
-    "eslint": "^2.12.0",
-    "eslint-config-airbnb": "^9.0.1",
-    "eslint-plugin-import": "^1.8.1",
-    "eslint-plugin-jsx-a11y": "^2.0.1",
-    "eslint-plugin-react": "^5.2.2"
+    "eslint": "^3.5.0",
+    "eslint-config-airbnb": "^11.1.0",
+    "eslint-plugin-import": "^1.15.0",
+    "eslint-plugin-jsx-a11y": "^2.2.2",
+    "eslint-plugin-react": "^6.3.0",
+    "npm-check-updates": "^2.8.0"
   },
   "dependencies": {
-    "kua": "^1.0.2"
+    "kua": "^1.0.8"
   }
 }

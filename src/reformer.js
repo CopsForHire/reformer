@@ -37,7 +37,7 @@ class Reformer {
   coalesce(lines) {
     lines.push('')
     const result = lines.join('\n')
-    if (kua.option.print) {
+    if (kua.config.print) {
       process.stdout.write(result)
     }
     return result
