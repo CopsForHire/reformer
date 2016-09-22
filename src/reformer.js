@@ -201,7 +201,7 @@ class Reformer {
     this.iterateTables((table, fields, rules) => {
       if (!rules.preventTriggers) {
         lines.push(kua.leftAlign(`
-          CREATE TRIGGER before_insert_${table} before insert on \`${table}\`
+          CREATE TRIGGER before_insert_${table} BEFORE INSERT on \`${table}\`
           FOR EACH ROW BEGIN
           IF NOT (
             NEW.id REGEXP
@@ -212,8 +212,9 @@ class Reformer {
           END $$
         `))
         lines.push(kua.leftAlign(`
-          CREATE TRIGGER after_insert_${table} after insert on \`${table}\`
+          CREATE TRIGGER after_insert_${table} AFTER INSERT on \`${table}\`
           FOR EACH ROW BEGIN
+            IF @session IS NULL THEN SET @session = '00000000-0000-0000-0000-000000000000'; END IF;
         `))
         this.iterateFields(table, (field) => {
           if (!['i', 'id', 'created', 'updated'].includes(field)) {
@@ -229,12 +230,14 @@ class Reformer {
         })
         lines.push(kua.leftAlign(`
           END $$
-          CREATE TRIGGER before_update_${table} before update on \`${table}\`
+          CREATE TRIGGER before_update_${table} BEFORE UPDATE on \`${table}\`
           FOR EACH ROW BEGIN
           SET NEW.updated = NOW(6);
           END $$
-          CREATE TRIGGER after_update_${table} after update on \`${table}\`
-          FOR EACH ROW BEGIN`))
+          CREATE TRIGGER after_update_${table} AFTER UPDATE on \`${table}\`
+          FOR EACH ROW BEGIN
+            IF @session IS NULL THEN SET @session = '00000000-0000-0000-0000-000000000000'; END IF;
+        `))
         this.iterateFields(table, (field) => {
           if (!['i', 'id', 'created', 'updated'].includes(field)) {
             lines.push(kua.leftAlign(`
@@ -249,16 +252,17 @@ class Reformer {
         })
         lines.push(kua.leftAlign(`
           END $$
-          CREATE TRIGGER before_delete_${table} before delete on \`${table}\`
+          CREATE TRIGGER before_delete_${table} BEFORE DELETE on \`${table}\`
           FOR EACH ROW BEGIN
+          IF @session IS NULL THEN SET @session = '00000000-0000-0000-0000-000000000000'; END IF;
           INSERT history
             (\`session\`, \`table\`, \`id\`, \`at\`, \`op\`)
           VALUES
             (@session, '${table}', OLD.id, NOW(6), 'd');
           END $$`))
       }
-      lines.push('DELIMITER ;')
     })
+    lines.push('DELIMITER ;')
     return this.coalesce(lines)
   }
 
@@ -270,6 +274,7 @@ class Reformer {
           'before_insert',
           'after_insert',
           'before_update',
+          'before_delete',
           'after_update',
           'after_delete',
         ]) {
