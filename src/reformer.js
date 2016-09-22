@@ -85,6 +85,7 @@ class Reformer {
     const lines = []
     this.iterateTables((table, fields, rules) => {
       const parts = []
+      lines.push(`DROP TABLE IF EXISTS \`${table}\`;\n`)
       lines.push(`CREATE TABLE \`${table}\``)
       lines.push('(')
       const maxKeyLength =
@@ -100,7 +101,7 @@ class Reformer {
         c.type = {
           uuid: 'CHAR(36) BINARY',
           hash: 'CHAR(64)',
-          string: 'VARCHAR(255)',
+          string: `VARCHAR(${def.size || 255})`,
           boolean: 'TINYINT(1)',
           latitude: 'DECIMAL(8,6)',
           longitude: 'DECIMAL(9,6)',
