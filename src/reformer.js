@@ -82,7 +82,9 @@ class Reformer {
   }
 
   generateTables() {
-    const lines = []
+    const lines = [
+      'SET FOREIGN_KEY_CHECKS = 0;\n',
+    ]
     this.iterateTables((table, fields, rules) => {
       const parts = []
       lines.push(`DROP TABLE IF EXISTS \`${table}\`;\n`)
@@ -158,7 +160,8 @@ class Reformer {
           parts.push(`  KEY (${field})`)
         }
       })
-      const [t1, t2] = kua.dasherize(table).split(/-/)
+      // const [t1, t2] = kua.dasherize(table).split(/-/)
+      const [t1, t2] = table.split('_')
       if (t1 && t2) {
         parts.push(`  KEY \`${t1}\` (\`${t1}\`)`)
         parts.push(`  KEY \`${t2}\` (\`${t2}\`)`)
@@ -181,6 +184,7 @@ class Reformer {
         }
       })
     })
+    lines.push('DROP TABLE IF EXISTS `history`;\n')
     lines.push(kua.leftAlign(`
       CREATE TABLE \`history\` (
         \`i\`       BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -192,6 +196,7 @@ class Reformer {
         \`column\`  VARCHAR(255),
         \`value\`   TEXT
       );`))
+    lines.push('\nSET FOREIGN_KEY_CHECKS = 1;')
     return this.coalesce(lines)
   }
 
